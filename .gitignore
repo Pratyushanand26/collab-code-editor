@@ -1,0 +1,43 @@
+# dependencies
+node_modules
+
+# build outputs
+dist
+build
+
+# logs
+*.log
+
+# env
+.env
+.env.*
+
+# vite
+.vite
+
+# coverage
+coverage
+
+# typescript
+*.tsbuildinfo
+
+# editor
+.vscode
+.idea
+
+# mac
+.DS_Store
+
+# windows
+Thumbs.db
+
+# pnpm
+.pnpm-store
+
+# temp files
+tmp
+temp
+
+# docker volumes
+postgres-data
+redis-data
