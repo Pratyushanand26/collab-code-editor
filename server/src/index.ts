@@ -1,12 +1,14 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import cors from "cors";
 
 import executeRoutes from "./routes/execute.routes";
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/health", (_, res) => {
   res.json({
@@ -32,40 +34,48 @@ io.on("connection", (socket) => {
 
   socket.on("join-room", (roomId: string) => {
     const previousRoom =
-        currentRoom.get(socket.id);
+      currentRoom.get(socket.id);
 
     if (previousRoom) {
-        socket.leave(previousRoom);
-
-        console.log(
-        `${socket.id} left ${previousRoom}`
-        );
+      socket.leave(previousRoom);
     }
 
     socket.join(roomId);
 
     currentRoom.set(
-        socket.id,
-        roomId
+      socket.id,
+      roomId
     );
 
     console.log(
-        `${socket.id} joined ${roomId}`
+      `${socket.id} joined ${roomId}`
     );
-    });
+  });
 
   socket.on(
-    "chat-message",
-    ({ roomId, message }) => {
-      io.to(roomId).emit(
-        "chat-message",
-        message
+  "yjs-update",
+  ({ roomId, update }) => {
+    console.log(
+      "update length",
+      update.length
+    );
+
+    console.log(
+      update
+    );
+
+    socket
+      .to(roomId)
+      .emit(
+        "yjs-update",
+        update
       );
-    }
-  );
+  }
+);
 
   socket.on("disconnect", () => {
     currentRoom.delete(socket.id);
+
     console.log(
       "client disconnected",
       socket.id

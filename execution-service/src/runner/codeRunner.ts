@@ -8,7 +8,7 @@ export async function runCode(
   code: string,
   language:string
 ) {
-  const filename = `code-${Date.now()}.js`;
+  const filename = `code-${Date.now()}.${languageConfigs[language as keyof typeof languageConfigs].extension}`;
 
   const filepath = path.join(
     os.tmpdir(),
@@ -46,6 +46,13 @@ export async function runCode(
         ].command(filename),
         ]);
 
+
+    let timedOut = false;
+    const TIMEOUT_MS = 5000;
+    const timeout = setTimeout(() => {
+        timedOut = true;
+        child.kill();
+        }, TIMEOUT_MS);
     let stdout = "";
     let stderr = "";
 
@@ -66,6 +73,7 @@ export async function runCode(
         stdout,
         stderr,
         exitCode,
+        timedOut
       });
     });
 
